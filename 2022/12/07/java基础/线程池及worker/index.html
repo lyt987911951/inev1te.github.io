@@ -1,0 +1,180 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>线程池及worker | inev1te</title><meta name="author" content="lyt"><meta name="copyright" content="lyt"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="springCloudGateway">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程池及worker">
+<meta property="og:url" content="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8F%8Aworker/index.html">
+<meta property="og:site_name" content="inev1te">
+<meta property="og:description" content="springCloudGateway">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lyt987911951.github.io/img/dota2.jpeg">
+<meta property="article:published_time" content="2022-12-07T06:06:02.000Z">
+<meta property="article:modified_time" content="2022-12-09T14:33:05.261Z">
+<meta property="article:author" content="lyt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lyt987911951.github.io/img/dota2.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8F%8Aworker/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '线程池及worker',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-12-09 22:33:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/dota2.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">inev1te</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">线程池及worker</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-09T14:33:05.261Z" title="更新于 2022-12-09 22:33:05">2022-12-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/java%E5%9F%BA%E7%A1%80/">java基础</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="线程池及worker"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>#execute</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">public void execute(Runnable command) &#123;</span><br><span class="line">    if (command == null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    /*</span><br><span class="line">     * Proceed in 3 steps:</span><br><span class="line">     *</span><br><span class="line">     * 1. If fewer than corePoolSize threads are running, try to</span><br><span class="line">     * start a new thread with the given command as its first</span><br><span class="line">     * task.  The call to addWorker atomically checks runState and</span><br><span class="line">     * workerCount, and so prevents false alarms that would add</span><br><span class="line">     * threads when it shouldn&#x27;t, by returning false.</span><br><span class="line">     *</span><br><span class="line">     * 2. If a task can be successfully queued, then we still need</span><br><span class="line">     * to double-check whether we should have added a thread</span><br><span class="line">     * (because existing ones died since last checking) or that</span><br><span class="line">     * the pool shut down since entry into this method. So we</span><br><span class="line">     * recheck state and if necessary roll back the enqueuing if</span><br><span class="line">     * stopped, or start a new thread if there are none.</span><br><span class="line">     *</span><br><span class="line">     * 3. If we cannot queue task, then we try to add a new</span><br><span class="line">     * thread.  If it fails, we know we are shut down or saturated</span><br><span class="line">     * and so reject the task.</span><br><span class="line">     */</span><br><span class="line">    //1</span><br><span class="line">    int c = ctl.get();</span><br><span class="line">    //2</span><br><span class="line">    if (workerCountOf(c) &lt; corePoolSize) &#123;</span><br><span class="line">        if (addWorker(command, true))</span><br><span class="line">            return;</span><br><span class="line">        c = ctl.get();</span><br><span class="line">    &#125;</span><br><span class="line">    //3</span><br><span class="line">    if (isRunning(c) &amp;&amp; workQueue.offer(command)) &#123;</span><br><span class="line">        int recheck = ctl.get();</span><br><span class="line">        if (! isRunning(recheck) &amp;&amp; remove(command))</span><br><span class="line">            reject(command);</span><br><span class="line">        else if (workerCountOf(recheck) == 0)</span><br><span class="line">            addWorker(null, false);</span><br><span class="line">    &#125;</span><br><span class="line">    //4</span><br><span class="line">    else if (!addWorker(command, false))</span><br><span class="line">        reject(command);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>1.ctl是线程池中一个属性，本质就是int类型的数值<br>高3位描述 线程池 的状态<br>低29位描述 工作线程 的数量</p>
+</li>
+<li><ol start="2">
+<li>判读工作线程的量是否小于核心线程数，如果是，调用addWorker方法，如果成功返回，否则重新获取ctl</li>
+</ol>
+</li>
+<li><p>3.如果当前线程池在运行状态且向队列中放入任务成功，重新获取ctl，校验如果线程池不在运行中且删除任务成功，调用拒绝策略拒绝任务，否则如果工作线程数量为0，调用addWorker</p>
+</li>
+<li><p>如果非运行状态或无法向队列中加入任务，调用拒绝策略</p>
+</li>
+</ul>
+<p>#addWorker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">private boolean addWorker(Runnable firstTask, boolean core) &#123;</span><br><span class="line">    retry:</span><br><span class="line">    //1</span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        int c = ctl.get();</span><br><span class="line">        int rs = runStateOf(c);</span><br><span class="line"></span><br><span class="line">        // Check if queue empty only if necessary.</span><br><span class="line">        if (rs &gt;= SHUTDOWN &amp;&amp;</span><br><span class="line">            ! (rs == SHUTDOWN &amp;&amp;</span><br><span class="line">               firstTask == null &amp;&amp;</span><br><span class="line">               ! workQueue.isEmpty()))</span><br><span class="line">            return false;</span><br><span class="line">        //2</span><br><span class="line">        for (;;) &#123;</span><br><span class="line">            int wc = workerCountOf(c);</span><br><span class="line">            if (wc &gt;= CAPACITY ||</span><br><span class="line">                wc &gt;= (core ? corePoolSize : maximumPoolSize))</span><br><span class="line">                return false;</span><br><span class="line">            if (compareAndIncrementWorkerCount(c))</span><br><span class="line">                break retry;</span><br><span class="line">            c = ctl.get();  // Re-read ctl</span><br><span class="line">            if (runStateOf(c) != rs)</span><br><span class="line">                continue retry;</span><br><span class="line">            // else CAS failed due to workerCount change; retry inner loop</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    boolean workerStarted = false;</span><br><span class="line">    boolean workerAdded = false;</span><br><span class="line">    Worker w = null;</span><br><span class="line">    try &#123;</span><br><span class="line">        //3</span><br><span class="line">        w = new Worker(firstTask);</span><br><span class="line">        final Thread t = w.thread;</span><br><span class="line">        if (t != null) &#123;</span><br><span class="line">            final ReentrantLock mainLock = this.mainLock;</span><br><span class="line">            mainLock.lock();</span><br><span class="line">            try &#123;</span><br><span class="line">                // Recheck while holding lock.</span><br><span class="line">                // Back out on ThreadFactory failure or if</span><br><span class="line">                // shut down before lock acquired.</span><br><span class="line">                int rs = runStateOf(ctl.get());</span><br><span class="line"></span><br><span class="line">                if (rs &lt; SHUTDOWN ||</span><br><span class="line">                    (rs == SHUTDOWN &amp;&amp; firstTask == null)) &#123;</span><br><span class="line">                    if (t.isAlive()) // precheck that t is startable</span><br><span class="line">                        throw new IllegalThreadStateException();</span><br><span class="line">                    workers.add(w);</span><br><span class="line">                    int s = workers.size();</span><br><span class="line">                    if (s &gt; largestPoolSize)</span><br><span class="line">                        largestPoolSize = s;</span><br><span class="line">                    workerAdded = true;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                mainLock.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">            if (workerAdded) &#123;</span><br><span class="line">                //4</span><br><span class="line">                t.start();</span><br><span class="line">                workerStarted = true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        if (! workerStarted)</span><br><span class="line">            addWorkerFailed(w);</span><br><span class="line">    &#125;</span><br><span class="line">    return workerStarted;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.循环条件：任务队列非空</li>
+<li>2.如果超出核心数量，返回。如果增加worker数量成功，跳出retry循环。如果运行状态改变，则结束当次循环。</li>
+<li>3.新建worker，将当前线程和任务交给worker</li>
+<li>4.调用start方法，由于worker实现了runnable接口，该方法最终会调用worker的run方法，该方法会调用runWorker方法</li>
+</ul>
+<p>#runWorker</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">final void runWorker(Worker w) &#123;</span><br><span class="line">    Thread wt = Thread.currentThread();</span><br><span class="line">    Runnable task = w.firstTask;</span><br><span class="line">    w.firstTask = null;</span><br><span class="line">    w.unlock(); // allow interrupts</span><br><span class="line">    boolean completedAbruptly = true;</span><br><span class="line">    try &#123;</span><br><span class="line">        //1</span><br><span class="line">        while (task != null || (task = getTask()) != null) &#123;</span><br><span class="line">            w.lock();</span><br><span class="line">            // If pool is stopping, ensure thread is interrupted;</span><br><span class="line">            // if not, ensure thread is not interrupted.  This</span><br><span class="line">            // requires a recheck in second case to deal with</span><br><span class="line">            // shutdownNow race while clearing interrupt</span><br><span class="line">            if ((runStateAtLeast(ctl.get(), STOP) ||</span><br><span class="line">                 (Thread.interrupted() &amp;&amp;</span><br><span class="line">                  runStateAtLeast(ctl.get(), STOP))) &amp;&amp;</span><br><span class="line">                !wt.isInterrupted())</span><br><span class="line">                wt.interrupt();</span><br><span class="line">            try &#123;</span><br><span class="line">                beforeExecute(wt, task);</span><br><span class="line">                Throwable thrown = null;</span><br><span class="line">                try &#123;</span><br><span class="line">                    task.run();</span><br><span class="line">                &#125; catch (RuntimeException x) &#123;</span><br><span class="line">                    thrown = x; throw x;</span><br><span class="line">                &#125; catch (Error x) &#123;</span><br><span class="line">                    thrown = x; throw x;</span><br><span class="line">                &#125; catch (Throwable x) &#123;</span><br><span class="line">                    thrown = x; throw new Error(x);</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    afterExecute(task, thrown);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                task = null;</span><br><span class="line">                w.completedTasks++;</span><br><span class="line">                w.unlock();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        completedAbruptly = false;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        processWorkerExit(w, completedAbruptly);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.该方法会循环获取任务，如果任务不为空，则继续执行任务</li>
+</ul>
+<p>#getTask</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">private Runnable getTask() &#123;</span><br><span class="line">    boolean timedOut = false; // Did the last poll() time out?</span><br><span class="line"></span><br><span class="line">    for (;;) &#123;</span><br><span class="line">        int c = ctl.get();</span><br><span class="line">        int rs = runStateOf(c);</span><br><span class="line"></span><br><span class="line">        // Check if queue empty only if necessary.</span><br><span class="line">        if (rs &gt;= SHUTDOWN &amp;&amp; (rs &gt;= STOP || workQueue.isEmpty())) &#123;</span><br><span class="line">            decrementWorkerCount();</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int wc = workerCountOf(c);</span><br><span class="line"></span><br><span class="line">        // Are workers subject to culling?</span><br><span class="line">        boolean timed = allowCoreThreadTimeOut || wc &gt; corePoolSize;</span><br><span class="line"></span><br><span class="line">        if ((wc &gt; maximumPoolSize || (timed &amp;&amp; timedOut))</span><br><span class="line">            &amp;&amp; (wc &gt; 1 || workQueue.isEmpty())) &#123;</span><br><span class="line">            if (compareAndDecrementWorkerCount(c))</span><br><span class="line">                return null;</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            //1</span><br><span class="line">            Runnable r = timed ?</span><br><span class="line">                workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :</span><br><span class="line">                workQueue.take();</span><br><span class="line">            if (r != null)</span><br><span class="line">                return r;</span><br><span class="line">            timedOut = true;</span><br><span class="line">        &#125; catch (InterruptedException retry) &#123;</span><br><span class="line">            timedOut = false;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.该方法会判断，如果当前线程非核心线程，会调用poll方法（在keepAliveTime内尝试获取，如果未获取到，返回null），如果返回null，即超时，会把timedOut变为false，下次循环时返回null。如果未核心线程，会调用take方法，该方法会阻塞直到该队列返回任务。</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lyt987911951.github.io">lyt</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8F%8Aworker/">https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E7%BA%BF%E7%A8%8B%E6%B1%A0%E5%8F%8Aworker/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lyt987911951.github.io" target="_blank">inev1te</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/dota2.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%8D%81%E8%BF%9B%E5%88%B6%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6%E7%9A%84%E8%BD%AC%E6%8D%A2/"><img class="prev-cover" src="/img/dota2.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">十进制与是二进制转换</div></div></a></div><div class="next-post pull-right"><a href="/2022/12/07/java%E5%9F%BA%E7%A1%80/ArrayList%E5%8E%9F%E7%90%86/"><img class="next-cover" src="/img/dota2.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">ArrayList</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">lyt</div><div class="author-info__description">早日上岸</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/spring%20cloud/springCloudGateway/" title="spring cloud gateway"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="spring cloud gateway"/></a><div class="content"><a class="title" href="/2022/12/07/spring%20cloud/springCloudGateway/" title="spring cloud gateway">spring cloud gateway</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/docker%E5%AE%89%E8%A3%85/" title="docker安装"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker安装"/></a><div class="content"><a class="title" href="/2022/12/07/docker/docker%E5%AE%89%E8%A3%85/" title="docker安装">docker安装</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/mysql/" title="mysql安装（docker）"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql安装（docker）"/></a><div class="content"><a class="title" href="/2022/12/07/docker/mysql/" title="mysql安装（docker）">mysql安装（docker）</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/rabbitMq/" title="rabbitMq"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="rabbitMq"/></a><div class="content"><a class="title" href="/2022/12/07/docker/rabbitMq/" title="rabbitMq">rabbitMq</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/redis/" title="redis安装（docker）"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis安装（docker）"/></a><div class="content"><a class="title" href="/2022/12/07/docker/redis/" title="redis安装（docker）">redis安装（docker）</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By lyt</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

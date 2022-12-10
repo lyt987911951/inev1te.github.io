@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>多线程-线程池 | inev1te</title><meta name="author" content="lyt"><meta name="copyright" content="lyt"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="#创建方式  Executos中包含多种线程池的new方法，不过由于无法自定义拒绝方式，不推荐使用 new ThreadPoolExecutors()12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152&#x2F;** * Creates a new &amp;#123;@cod">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程-线程池">
+<meta property="og:url" content="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0/index.html">
+<meta property="og:site_name" content="inev1te">
+<meta property="og:description" content="#创建方式  Executos中包含多种线程池的new方法，不过由于无法自定义拒绝方式，不推荐使用 new ThreadPoolExecutors()12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152&#x2F;** * Creates a new &amp;#123;@cod">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://lyt987911951.github.io/img/dota2.jpeg">
+<meta property="article:published_time" content="2022-12-07T06:06:02.000Z">
+<meta property="article:modified_time" content="2022-12-09T14:30:07.972Z">
+<meta property="article:author" content="lyt">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://lyt987911951.github.io/img/dota2.jpeg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: false,
+    rightside: false,
+  }
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '多线程-线程池',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2022-12-09 22:30:07'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 6.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/dota2.jpeg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">inev1te</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">多线程-线程池</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2022-12-09T14:30:07.972Z" title="更新于 2022-12-09 22:30:07">2022-12-09</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/java%E5%9F%BA%E7%A1%80/">java基础</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="多线程-线程池"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><p>#创建方式</p>
+<ul>
+<li>Executos中包含多种线程池的new方法，不过由于无法自定义拒绝方式，不推荐使用</li>
+<li>new ThreadPoolExecutors()<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Creates a new &#123;@code ThreadPoolExecutor&#125; with the given initial</span><br><span class="line"> * parameters.</span><br><span class="line"> *</span><br><span class="line"> * @param corePoolSize the number of threads to keep in the pool, even</span><br><span class="line"> *        if they are idle, unless &#123;@code allowCoreThreadTimeOut&#125; is set</span><br><span class="line"> * @param maximumPoolSize the maximum number of threads to allow in the</span><br><span class="line"> *        pool</span><br><span class="line"> * @param keepAliveTime when the number of threads is greater than</span><br><span class="line"> *        the core, this is the maximum time that excess idle threads</span><br><span class="line"> *        will wait for new tasks before terminating.</span><br><span class="line"> * @param unit the time unit for the &#123;@code keepAliveTime&#125; argument</span><br><span class="line"> * @param workQueue the queue to use for holding tasks before they are</span><br><span class="line"> *        executed.  This queue will hold only the &#123;@code Runnable&#125;</span><br><span class="line"> *        tasks submitted by the &#123;@code execute&#125; method.</span><br><span class="line"> * @param threadFactory the factory to use when the executor</span><br><span class="line"> *        creates a new thread</span><br><span class="line"> * @param handler the handler to use when execution is blocked</span><br><span class="line"> *        because the thread bounds and queue capacities are reached</span><br><span class="line"> * @throws IllegalArgumentException if one of the following holds:&lt;br&gt;</span><br><span class="line"> *         &#123;@code corePoolSize &lt; 0&#125;&lt;br&gt;</span><br><span class="line"> *         &#123;@code keepAliveTime &lt; 0&#125;&lt;br&gt;</span><br><span class="line"> *         &#123;@code maximumPoolSize &lt;= 0&#125;&lt;br&gt;</span><br><span class="line"> *         &#123;@code maximumPoolSize &lt; corePoolSize&#125;</span><br><span class="line"> * @throws NullPointerException if &#123;@code workQueue&#125;</span><br><span class="line"> *         or &#123;@code threadFactory&#125; or &#123;@code handler&#125; is null</span><br><span class="line"> */</span><br><span class="line">public ThreadPoolExecutor(int corePoolSize,</span><br><span class="line">                          int maximumPoolSize,</span><br><span class="line">                          long keepAliveTime,</span><br><span class="line">                          TimeUnit unit,</span><br><span class="line">                          BlockingQueue&lt;Runnable&gt; workQueue,</span><br><span class="line">                          ThreadFactory threadFactory,</span><br><span class="line">                          RejectedExecutionHandler handler) &#123;</span><br><span class="line">    if (corePoolSize &lt; 0 ||</span><br><span class="line">        maximumPoolSize &lt;= 0 ||</span><br><span class="line">        maximumPoolSize &lt; corePoolSize ||</span><br><span class="line">        keepAliveTime &lt; 0)</span><br><span class="line">        throw new IllegalArgumentException();</span><br><span class="line">    if (workQueue == null || threadFactory == null || handler == null)</span><br><span class="line">        throw new NullPointerException();</span><br><span class="line">    this.acc = System.getSecurityManager() == null ?</span><br><span class="line">            null :</span><br><span class="line">            AccessController.getContext();</span><br><span class="line">    this.corePoolSize = corePoolSize;</span><br><span class="line">    this.maximumPoolSize = maximumPoolSize;</span><br><span class="line">    this.workQueue = workQueue;</span><br><span class="line">    this.keepAliveTime = unit.toNanos(keepAliveTime);</span><br><span class="line">    this.threadFactory = threadFactory;</span><br><span class="line">    this.handler = handler;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>参数解析</p>
+<ul>
+<li>corePoolSize 核心线程池大小</li>
+<li>maximumPoolSize 最大线程池大小</li>
+<li>keepAliveTime 线程最大空闲时间</li>
+<li>unit 时间单位</li>
+<li>workQueue 线程等待队列</li>
+<li>threadFactory 线程创建工厂</li>
+<li>handler 拒绝策略</li>
+</ul>
+</blockquote>
+</li>
+</ul>
+<p>#workQueue<br><img src="https://upload-images.jianshu.io/upload_images/27335260-3820daf2c01986d2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="队列所有实现类"></p>
+<blockquote>
+<ul>
+<li>boolean add(E e);如果可以在不违反容量限制的情况下立即将指定元素插入此队列，则在成功时返回true ，如果当前没有可用空间则IllegalStateException 。 使用容量受限队列时，通常最好使用offer 。</li>
+<li>boolean contains(Object o);如果此队列包含指定的元素，则返回true 。 更正式地说，当且仅当此队列包含至少一个元素e使得o.equals(e)时才返回true 。</li>
+<li>int drainTo(Collection&lt;? super E&gt; c);从此队列中移除所有可用元素并将它们添加到给定的集合中。 此操作可能比重复轮询此队列更有效。 尝试将元素添加到集合c遇到的失败可能会导致在引发相关异常时元素既不在集合中也不在其中一个或两个集合中。 尝试将队列排空到自身会导致IllegalArgumentException 。 此外，如果在操作进行时修改了指定的集合，则此操作的行为是未定义的</li>
+<li>int drainTo(Collection&lt;? super E&gt; c, int maxElements);最多从此队列中移除给定数量的可用元素，并将它们添加到给定的集合中。 尝试将元素添加到集合c遇到的失败可能会导致在引发相关异常时元素既不在集合中也不在其中一个或两个集合中。 尝试将队列排空到自身会导致IllegalArgumentException 。 此外，如果在操作进行时修改了指定的集合，则此操作的行为是未定义的。</li>
+<li>boolean offer(E e);如果可以在不违反容量限制的情况下立即将指定元素插入此队列，则在成功时返回true ，如果当前没有可用空间则返回false 。 当使用容量受限的队列时，此方法通常比add更可取，后者可能仅通过抛出异常而无法插入元素</li>
+<li>boolean offer(E e, long timeout, TimeUnit unit)throws InterruptedException;将指定的元素插入此队列，并在必要时等待指定的等待时间以获取可用空间。</li>
+<li>E poll(long timeout, TimeUnit unit)throws InterruptedException;检索并删除此队列的头部，在指定的时间内等待元素可用</li>
+<li>void put(E e) throws InterruptedException;将指定的元素插入此队列，必要时等待空间可用。</li>
+<li>int remainingCapacity();返回此队列在理想情况下（在没有内存或资源限制的情况下）可以无阻塞接受的附加元素的数量，如果没有内在限制，则返回Integer.MAX_VALUE 。<br>请注意，您不能总是通过检查remainingCapacity容量来判断插入元素的尝试是否会成功，因为可能是另一个线程即将插入或删除元素的情况。</li>
+<li>boolean remove(Object o);从此队列中移除指定元素的单个实例（如果存在）。 更正式地，如果这个队列包含一个或多个这样的元素，则删除一个元素e使得o.equals(e) 。 如果此队列包含指定的元素（或等效地，如果此队列因调用而更改），则返回true 。</li>
+<li>E take() throws InterruptedException;检索并删除此队列的头部，必要时等待元素变为可用。</li>
+</ul>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>添加</th>
+<th>获取</th>
+<th>删除</th>
+<th>查询</th>
+<th>复制</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>抛出异常</td>
+<td>add</td>
+<td>contains</td>
+<td></td>
+<td></td>
+<td>drainTo</td>
+</tr>
+<tr>
+<td>等待</td>
+<td>offer，put</td>
+<td>poll</td>
+<td>take</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>返回特殊值</td>
+<td>offer</td>
+<td></td>
+<td>remove</td>
+<td>remainingCapacity</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>ArrayBlockingQueue<blockquote>
+<p>ArrayBlockingQueue是一个阻塞式的队列，继承自AbstractBlockingQueue,间接的实现了Queue接口和Collection接口。底层以数组的形式保存数据(实际上可看作一个循环数组)。常用的操作包括 add，offer，put，remove，poll，take，peek。<br>根据 ArrayBlockingQueue 的名字我们都可以看出，它是一个队列，并且是一个基于数组的阻塞队列。<br>ArrayBlockingQueue 是一个有界队列，有界也就意味着，它不能够存储无限多数量的对象。所以在创建 ArrayBlockingQueue 时，必须要给它指定一个队列的大小。</p>
+</blockquote>
+</li>
+</ul>
+<p>我们先来熟悉一下 ArrayBlockingQueue 中的几个重要的方法。</p>
+<blockquote>
+<p>add(E e)：把 e 加到 BlockingQueue 里，即如果 BlockingQueue 可以容纳，则返回 true，否则报异常<br>offer(E e)：表示如果可能的话，将 e 加到 BlockingQueue 里，即如果 BlockingQueue 可以容纳，则返回 true，否则返回 false<br>put(E e)：把 e 加到 BlockingQueue 里，如果 BlockQueue 没有空间，则调用此方法的线程被阻断直到 BlockingQueue 里面有空间再继续<br>poll(time)：取走 BlockingQueue 里排在首位的对象，若不能立即取出，则可以等 time 参数规定的时间,取不到时返回 null<br>take()：取走 BlockingQueue 里排在首位的对象，若 BlockingQueue 为空，阻断进入等待状态直到 Blocking 有新的对象被加入为止<br>remainingCapacity()：剩余可用的大小。等于初始容量减去当前的 size</p>
+</blockquote>
+<p>ArrayBlockingQueue 使用场景。</p>
+<p>先进先出队列（队列头的是最先进队的元素；队列尾的是最后进队的元素）<br>有界队列（即初始化时指定的容量，就是队列最大的容量，不会出现扩容，容量满，则阻塞进队操作；容量空，则阻塞出队操作）<br>队列不支持空元素</p>
+<ul>
+<li>DelayQueue<blockquote>
+<p>　　java延迟队列提供了在指定时间才能获取队列元素的功能，队列头元素是最接近过期的元素。没有过期元素的话，使用poll()方法会返回null值，超时判定是通过getDelay(TimeUnit.NANOSECONDS)方法的返回值小于等于0来判断。延时队列不能存放空元素。</p>
+</blockquote>
+</li>
+<li>DelayedWorkQueue<blockquote>
+<p>DelayedWorkQueue是基于堆结构的等待队列。</p>
+</blockquote>
+</li>
+<li>LinkedBlockingDeque<blockquote>
+<p>LinkedBlockingDeque是基于链表的、线程安全的双端阻塞队列</p>
+</blockquote>
+</li>
+<li>LinkedBlockingQueue<blockquote>
+<p>LinkedBlockingQueue是基于链表的先进先出的阻塞队列。</p>
+</blockquote>
+</li>
+<li>LinkedTransferQueue<blockquote>
+<p>TransferQueue(java7引入)继承了BlockingQueue（BlockingQueue又继承了Queue）并扩展了一些新方法。生产者会一直阻塞直到所添加到队列的元素被某一个消费者所消费（不仅仅是添加到队列里就完事）。</p>
+</blockquote>
+</li>
+<li>PriorityBlockingQueue<blockquote>
+<p>PriorityBlockingQueue是一个支持优先级的无界阻塞队列，直到系统资源耗尽。默认情况下元素采用自然顺序升序排列。也可以自定义类实现compareTo()方法来指定元素排序规则，或者初始化PriorityBlockingQueue时，指定构造参数Comparator来对元素进行排序。但需要注意的是不能保证同优先级元素的顺序。PriorityBlockingQueue也是基于最小二叉堆实现，使用基于CAS实现的自旋锁来控制队列的动态扩容，保证了扩容操作不会阻塞take操作的执行。</p>
+</blockquote>
+</li>
+<li>SynchronousQueue<blockquote>
+<p>SynchronousQueue 也是一个队列来的，但它的特别之处在于它内部没有容器，一个生产线程，当它生产产品（即put的时候），如果当前没有人想要消费产品(即当前没有线程执行take)，此生产线程必须阻塞，等待一个消费线程调用take操作，take操作将会唤醒该生产线程，同时消费线程会获取生产线程的产品（即数据传递），这样的一个过程称为一次配对过程(当然也可以先take后put,原理是一样的)。</p>
+</blockquote>
+</li>
+</ul>
+<p>#handler </p>
+<p>拒绝策略的四种子类都在ThreadPoolExecutor中，可直接使用<br><img src="https://upload-images.jianshu.io/upload_images/27335260-b38fe94f60a5f31a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="拒绝策略"></p>
+<ul>
+<li>AbortPolicy <strong>抛出RejectedExecutionException拒绝任务的处理程序</strong></li>
+<li>CallerRunsPolicy <strong>被拒绝任务的处理程序，它直接在execute方法的调用线程中运行被拒绝的任务，除非执行程序已关闭，在这种情况下任务将被丢弃。</strong></li>
+<li>DiscardOldestPolicy <strong>被拒绝任务的处理程序，丢弃最早的未处理请求，然后重试execute ，除非执行程序关闭，在这种情况下任务将被丢弃</strong></li>
+<li>DiscardPolicy <strong>被拒绝任务的处理程序，它默默地丢弃被拒绝的任务。</strong></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://lyt987911951.github.io">lyt</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0/">https://lyt987911951.github.io/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://lyt987911951.github.io" target="_blank">inev1te</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"></div><div class="post_share"><div class="social-share" data-image="/img/dota2.jpeg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2022/12/07/spring%20cloud/feign%E8%B0%83%E7%94%A8%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%902/"><img class="prev-cover" src="/img/dota2.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">feign调用原理2</div></div></a></div><div class="next-post pull-right"><a href="/2022/12/07/java%E5%9F%BA%E7%A1%80/%E5%A4%9A%E7%BA%BF%E7%A8%8B-%E7%BA%BF%E7%A8%8B%E6%B1%A0-worker/"><img class="next-cover" src="/img/dota2.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">多线程-线程池</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">lyt</div><div class="author-info__description">早日上岸</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">28</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">2</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/spring%20cloud/springCloudGateway/" title="spring cloud gateway"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="spring cloud gateway"/></a><div class="content"><a class="title" href="/2022/12/07/spring%20cloud/springCloudGateway/" title="spring cloud gateway">spring cloud gateway</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/docker%E5%AE%89%E8%A3%85/" title="docker安装"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="docker安装"/></a><div class="content"><a class="title" href="/2022/12/07/docker/docker%E5%AE%89%E8%A3%85/" title="docker安装">docker安装</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/mysql/" title="mysql安装（docker）"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="mysql安装（docker）"/></a><div class="content"><a class="title" href="/2022/12/07/docker/mysql/" title="mysql安装（docker）">mysql安装（docker）</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/rabbitMq/" title="rabbitMq"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="rabbitMq"/></a><div class="content"><a class="title" href="/2022/12/07/docker/rabbitMq/" title="rabbitMq">rabbitMq</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2022/12/07/docker/redis/" title="redis安装（docker）"><img src="/img/dota2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis安装（docker）"/></a><div class="content"><a class="title" href="/2022/12/07/docker/redis/" title="redis安装（docker）">redis安装（docker）</a><time datetime="2022-12-07T06:06:02.000Z" title="发表于 2022-12-07 14:06:02">2022-12-07</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2022 By lyt</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
